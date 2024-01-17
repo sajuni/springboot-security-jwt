@@ -2,15 +2,14 @@ package com.example.springbootsecurityjwt.security;
 
 import com.example.springbootsecurityjwt.member.entity.Member;
 import com.example.springbootsecurityjwt.member.repository.MemberRepository;
-import jakarta.servlet.ServletException;
+import com.example.springbootsecurityjwt.utils.exception.BizException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -26,7 +25,7 @@ public class CustomUserDetailService implements UserDetailsService {
             Member member = byMbrId.get();
             return new CustomUserDetails(member);
         } else {
-            throw new UsernameNotFoundException("User Not Found: " + username);
+            throw new BizException("ID " + username + "가 존재하지 않습니다.", HttpStatus.ACCEPTED);
         }
     }
 
