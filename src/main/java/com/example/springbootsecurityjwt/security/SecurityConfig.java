@@ -1,6 +1,5 @@
 package com.example.springbootsecurityjwt.security;
 
-import com.example.springbootsecurityjwt.jwt.JwtAuthenticationEntryPoint;
 import com.example.springbootsecurityjwt.jwt.JwtAuthenticationFilter;
 import com.example.springbootsecurityjwt.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
@@ -33,7 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable) // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler))
                 .sessionManagement((session) ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // disable session
