@@ -32,8 +32,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable) // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint))
-                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint)) // 인증 처리 익셉션 핸들링
+                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler)) // 권한 부족 시 익셉션 핸들링
                 .sessionManagement((session) ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // disable session
                 .authorizeHttpRequests((request) ->
