@@ -4,12 +4,14 @@ import com.example.springbootsecurityjwt.utils.enums.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
     
@@ -35,14 +38,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (SecurityException | MalformedJwtException | IllegalArgumentException e) {
+        } catch (SignatureException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
             request.setAttribute("exception", ErrorCode.WRONG_TYPE_TOKEN.getCode());
         } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
             request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
         } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 형식이나 구성의 JWT 토큰입니다.");
             request.setAttribute("exception", ErrorCode.UNSUPPORTED_TOKEN.getCode());
-        } catch (Exception e) {
-            request.setAttribute("exception", ErrorCode.UNKNOWN_ERROR.getCode());
         }
 
         chain.doFilter(request, response);
